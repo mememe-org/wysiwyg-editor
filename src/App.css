@@ -15,7 +15,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: black;
-  margin-top: 10vh;
+  margin-top: 5vh;
 }
 
 .App-link {
@@ -23,12 +23,13 @@
 }
 
 .input-container {
-  width: 30%;
+  width: 40%;
 }
 
 .image-container {
   width: 40%;
   padding-right: 32px;
+  overflow: hidden;
 }
 
 .input-border {
@@ -38,28 +39,15 @@
   background-clip: border-box;
   border: 1px solid rgba(0,0,0,.125);
   border-radius: .25rem;
-  padding: 32px;
+  padding: 16px;
   margin-bottom: 32px;
-}
-.input-title-container {
-  display: flex;
-  flex-direction: column;
-  align-items: column;
-  width: 30%;
-}
-
-.input-value-container {
-  display: flex;
-  flex-direction: column;
-  align-items: column;
-  width: 70%;
 }
 
 .row-container {
   display: flex;
   align-items: center;
   width: 100%;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-bottom: 16px;
 }
 
@@ -67,6 +55,7 @@
   margin-right: 16px;
   text-align: end;
 }
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

@@ -9,8 +9,8 @@ import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import { withStyles } from '@material-ui/core/styles';
-import yamlConverter from 'js-yaml'
-import Portal from './Portal';
+
+import yamlConverter from 'js-yaml';
 
 import { Stage, Layer, Rect, Text, Image } from 'react-konva';
 import Konva from 'konva';
@@ -60,22 +60,22 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 2,
   },
   textField:{
-    width: '70%',
+    width: '50%',
+    marginRight: 16
+  },
+  fontSize:{
+    width: '10%'
   }
 });
 
 class App extends Component {
   state = {
     inputs: [
-      {key: 'top', value: ''},
-      {key: 'bottom', value: ''},
+      {key: 'top', value: '', color: '#ff0000', x: 50, y: 50, fontSize: 48},
+      {key: 'bottom', value: '', color: '#00ff00', x: 50, y: 220, fontSize: 48},
     ],
     template: '',
     labelWidth: 0,
-    isDragging: false,
-    x: 50,
-    y: 50,
-    fontSize:12,
   }
   componentDidMount() {
     // const canvas = this.refs.canvas
@@ -121,7 +121,6 @@ bottom text:
     y: 690    
     `
     const doc = yamlConverter.safeLoad(yamlString)
-    console.log(doc)
   }
 
   handleChangeTemplate = event => {
@@ -129,97 +128,116 @@ bottom text:
   };
 
   handleSubmit = () => {
-    console.log(this.state)
+    console.log('submit')
   }
 
   handleTextFieldChange = key => event => {
     const { inputs } = this.state
     const oldInputs = inputs
-    const newInputs = oldInputs.forEach( input => {
+    const newInputs = oldInputs.map( input => {
       const { key: inputKey } = input
       if(key === inputKey) {
         input.value = event.target.value
       }
+      return input
     })
-    this.setState({ [key]: event.target.value });
+    this.setState({ inputs: newInputs });
   }
 
-  renderField = (inputs) => (
-    <div className="input-title-container">
-      {inputs.map( ({ key }) => (
-        <div className="input-title" key={key}>
-          {key}
-        </div>
-      ))}
-    </div>
-  )
+  handleFontSizeChange = key => event => {
+    const { inputs } = this.state
+    const oldInputs = inputs
+    const newInputs = oldInputs.map( input => {
+      const { key: inputKey } = input
+      if(key === inputKey) {
+        input.fontSize = event.target.value
+      }
+      return input
+    })
+    this.setState({ inputs: newInputs });
+  }
 
-  renderValue = (inputs, classes) => (
-    <div className="input-value-container">
-      {inputs.map( ({ key, value }) => (
-        <TextField
-          className={classes.textField}
-          id="outlined-bare"
-          value={value}
-          margin="normal"
-          variant="outlined"
-          onChange={this.handleTextFieldChange(key)}
-        />
-      ))}
-    </div>
-  )
+  handleColorChange = key => event => {
+    const { inputs } = this.state
+    const oldInputs = inputs
+    const newInputs = oldInputs.map( input => {
+      const { key: inputKey } = input
+      if(key === inputKey) {
+        input.color = event.target.value
+      }
+      return input
+    })
+    this.setState({ inputs: newInputs });
+  }
+
+  handleOnDragEnd = key => event =>{
+    const { inputs } = this.state
+    const oldInputs = inputs
+    const newInputs = oldInputs.map( input => {
+      const { key: inputKey } = input
+      if(key === inputKey) {
+        input.x = event.target.x()
+        input.y = event.target.y()
+      }
+      console.log(event.target.y())
+      return input
+    })
+    this.setState({ inputs: newInputs });
+  }
 
   render() {
-    const { inputs, template, fontSize } = this.state
+    const { inputs, template } = this.state
     const { classes } = this.props;
 
     return (
       <div className="App">
         <header className="App-header" variant="outlined">
           <div className="image-container">
-            <Stage ref="stage" width={width} height={height} >
-              <Layer style={{position: 'relative'}}>
+            <Stage ref="stage" width={width} height={height} style={{position: 'relative', overflow: 'hidden'}}>
+              <Layer>
                 <LionImage></LionImage>
-                <Text
-                  text={`${inputs[0].value}`}
-                  x={this.state.x}
-                  y={this.state.y}
-                  fontSize={fontSize}
-                  draggable
-                  fill={this.state.isDragging ? 'green' : 'red'}
-                  onDragStart={() => {
-                    this.setState({
-                      isDragging: true
-                    });
-                  }}
-                  width={width-16}
-                  onDragEnd={e => {
-                    this.setState({
-                      isDragging: false,
-                      x: e.target.x(),
-                      y: e.target.y()
-                    });
-                  }}
-                  wrap
-                />
+                {inputs.map( ({key, value, color, x, y, fontSize}) => {
+                  return (<Text
+                    text={`${value}`}
+                    x={x}
+                    y={y}
+                    fontSize={fontSize}
+                    draggable
+                    fill={color}
+                    width={width-16}
+                    onDragEnd={this.handleOnDragEnd(key)}
+                    wrap
+                    key={key}
+                  />)
+                })
+                }
               </Layer>
             </Stage>
             <img ref="image" src={'https://i.imgur.com/jUOj2YX.png'} className="App-logo" alt="logo" />
           </div>
           <div className="input-container">
             <div className="input-border">
-              {inputs.map( ({ key, value }) => (
+              {inputs.map( ({ key, value, color, fontSize }) => (
                   <div className="row-container" key={key}>
                     <div className="input-title">
                       {key}
                     </div>
                     <TextField
                       className={classes.textField}
-                      id="outlined-bare"
+                      id={key + value}
                       value={value}
                       margin="normal"
                       variant="outlined"
                       onChange={this.handleTextFieldChange(key)}
+                    />
+                    <input type="color" id={key + color} value={color} onChange={this.handleColorChange(key)}></input>
+                    <TextField
+                      className={classes.fontSize}
+                      id={key + fontSize}
+                      value={fontSize}
+                      margin="normal"
+                      variant="outlined"
+                      onChange={this.handleFontSizeChange(key)}
                     />
                   </div>
                 ))
@@ -230,7 +248,6 @@ bottom text:
             </div>
             <Button variant="contained" color="primary" onClick={()=>{
               const node = this.refs.stage
-              console.log(node)
               const dataURL = node.toDataURL()
               const link = document.createElement('a');
               link.download = 'name.jpg';
