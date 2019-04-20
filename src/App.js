@@ -242,9 +242,6 @@ bottom text:
                   </div>
                 ))
               }
-              <Button variant="contained" color="primary" onClick={this.handleSubmit}>
-                Primary
-              </Button>
             </div>
             <Button variant="contained" color="primary" onClick={()=>{
               const node = this.refs.stage
@@ -256,7 +253,7 @@ bottom text:
               link.click();
               document.body.removeChild(link);
             }}>
-              to canvas
+              Export
             </Button>
           </div>
         </header>
