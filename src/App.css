@@ -16,6 +16,7 @@
   font-size: calc(10px + 2vmin);
   color: black;
   margin-top: 5vh;
+  flex-wrap: wrap;
 }
 
 .App-link {
@@ -56,11 +57,14 @@
   text-align: end;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+@media only screen and (max-width: 600px) {
+  .input-container {
+    width: 80%;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .image-container {
+    width: 80%;
+    margin-bottom: 16px;
+    overflow: auto;
   }
 }
