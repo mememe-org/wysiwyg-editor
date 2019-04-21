@@ -143,7 +143,6 @@ class App extends Component {
         input.x = event.target.x()
         input.y = event.target.y()
       }
-      console.log(event.target.y())
       return input
     })
     this.setState({ inputs: newInputs });
@@ -152,7 +151,7 @@ class App extends Component {
   onClickExport = () => {
     const { backgroundImageURL, inputs, width, height } = this.state
     let yaml = {}
-    yaml.image = backgroundImageURL
+    yaml.background = {image: backgroundImageURL}
     yaml.size = {width, height}
     inputs.map( input => {
       const { key, value, color, x, y, fontSize } = input
@@ -170,7 +169,6 @@ class App extends Component {
   render() {
     const { inputs, template, backgroundImageURL, width, height } = this.state
     const { classes } = this.props;
-    console.log(this.state)
     return (
       <div className="App">
         <header className="App-header" variant="outlined">

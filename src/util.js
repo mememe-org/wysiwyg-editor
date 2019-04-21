@@ -43,12 +43,10 @@ const resolveTemplate = (templateId) => {
   req.send(null)
 
   if (req.status === 200) {
-    console.log(req.responseText);
     return yaml.safeLoad(req.responseText)
   }
 }
 
 export const loadTemplate = (templateId) => {
-  console.log('load', templateId)
   return loadSpec(resolveTemplate(templateId), resolveTemplate)
 }
