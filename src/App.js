@@ -16,13 +16,11 @@ import { Stage, Layer, Rect, Text, Image } from 'react-konva';
 import Konva from 'konva';
 import useImage from 'use-image';
 
+import { convertSpecToState, loadTemplate } from './util'
+
 const LionImage = ({url, width, height}) => {
   let [image] = useImage(url);
   return <Image image={image}/>
-  // if(image){
-  //   console.log('image!!!!')
-  //   return <Image image={image} />;
-  // } else return null
 };
 
 class ColoredRect extends React.Component {
@@ -48,9 +46,6 @@ class ColoredRect extends React.Component {
     );
   }
 }
-
-const width = 400
-const height = 500
 
 const styles = theme => ({
   root: {
@@ -84,54 +79,16 @@ class App extends Component {
     width: 99,
     height: 98
   }
-  componentDidMount() {
-    // const canvas = this.refs.canvas
-    // const ctx = canvas.getContext("2d")
-    // const img = this.refs.image
-    // img.onload = () => {
-    //   ctx.drawImage(img, 0, 0)
-    // }
-
-    // Konva.Image.fromURL('https://i.imgur.com/jUOj2YX.png', (image) => {
-    //   this.setState({backgroundImage: image})
-    // })
-    const yamlString = `
-size: 600x710
-background:
-  image: https://i.imgur.com/jUOj2YX.png
-top text:
-  text: top text
-  style:
-    font: bold 60px Impact
-    color: white
-  stroke:
-    width: 1
-    color: black
-  position:
-    x: 300
-    y: 80
-    z: 1
-bottom text:
-  text: bottom text
-  style:
-    font: bold 60px Impact
-    color: white
-  stroke:
-    width: 1
-    color: black
-  position:
-    x: 300
-    y: 690    
-    `
-    const doc = yamlConverter.safeLoad(yamlString)
-    console.log(doc)
-    for(let key in doc){
-      console.log(key)
-    }
-  }
 
   handleChangeTemplate = event => {
+    const templateName = event.target.value
+
+    const templateSpec = loadTemplate(templateName)
+    const newState = convertSpecToState(templateSpec)
+
+
     this.setState({ template: event.target.value });
+    this.setState({ ...newState });
   };
 
   handleSubmit = () => {
@@ -211,7 +168,7 @@ bottom text:
   }
 
   render() {
-    const { inputs, template, backgroundImageURL } = this.state
+    const { inputs, template, backgroundImageURL, width, height } = this.state
     const { classes } = this.props;
     console.log(this.state)
     return (
@@ -231,8 +188,8 @@ bottom text:
                     fontFamily={'impact'}
                     draggable
                     fill={color}
-                    width={500}
-                    align={'center'}
+                    width={width}
+                    // align={'center'}
                     onDragEnd={this.handleOnDragEnd(key)}
                     wrap
                     stroke={'black'}
@@ -297,9 +254,8 @@ bottom text:
               />
             }
           >
-            <MenuItem value={10}>Bad Luck Brian</MenuItem>
-            <MenuItem value={20}>One Does Not Simply</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
+            <MenuItem value={'bad-luck-brian'}>Bad Luck Brian</MenuItem>
+            <MenuItem value={'one-does-not-simply'}>One Does Not Simply</MenuItem>
           </Select>
         </FormControl>
       </div>
