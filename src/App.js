@@ -170,11 +170,6 @@ class App extends Component {
   render() {
     const { inputs, template, backgroundImageURL, width, height } = this.state
     const { classes } = this.props;
-<<<<<<< HEAD
-=======
-    const widthvh = window.innerWidth
-    console.log(widthvh)
->>>>>>> 3119749353cd064b8f74ef484b97bb02550a400c
     return (
       <div className="App">
         <header className="App-header" variant="outlined">
