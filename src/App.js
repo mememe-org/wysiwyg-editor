@@ -54,6 +54,7 @@ const styles = theme => ({
   },
   formControl: {
     minWidth: 120,
+    marginTop: 24,
   },
   selectEmpty: {
     marginTop: theme.spacing.unit * 2,
@@ -170,15 +171,16 @@ class App extends Component {
   render() {
     const { inputs, template, backgroundImageURL, width, height } = this.state
     const { classes } = this.props;
-    console.log(this.state)
+    const widthvh = window.innerWidth
+    console.log(widthvh)
     return (
       <div className="App">
         <header className="App-header" variant="outlined">
           <div className="image-container">
-            <Stage ref="stage" width={width} height={height} style={{position: 'relative', overflow: 'hidden'}}>
+            <Stage ref="stage" width={width} height={height} style={{position: 'relative', overflow: 'scroll-x'}}>
               <Layer>
                 {/* <LionImage image={backgroundImage}></LionImage> */}
-                <LionImage url={backgroundImageURL} width={width} height={height}></LionImage>
+                <LionImage url={backgroundImageURL} width={600} height={710}></LionImage>
                 {inputs.map( ({key, value, color, x, y, fontSize}) => {
                   return (<Text
                     text={`${value}`}
