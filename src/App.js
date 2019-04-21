@@ -16,9 +16,13 @@ import { Stage, Layer, Rect, Text, Image } from 'react-konva';
 import Konva from 'konva';
 import useImage from 'use-image';
 
-const LionImage = () => {
-  const [image] = useImage('https://i.imgur.com/jUOj2YX.png');
-  return <Image image={image} />;
+const LionImage = ({url, width, height}) => {
+  let [image] = useImage(url);
+  return <Image image={image}/>
+  // if(image){
+  //   console.log('image!!!!')
+  //   return <Image image={image} />;
+  // } else return null
 };
 
 class ColoredRect extends React.Component {
@@ -45,8 +49,8 @@ class ColoredRect extends React.Component {
   }
 }
 
-const width = 600
-const height = 710
+const width = 400
+const height = 500
 
 const styles = theme => ({
   root: {
@@ -76,6 +80,9 @@ class App extends Component {
     ],
     template: '',
     labelWidth: 0,
+    backgroundImageURL: 'https://i.imgur.com/jUOj2YX.png',
+    width: 99,
+    height: 98
   }
   componentDidMount() {
     // const canvas = this.refs.canvas
@@ -84,43 +91,43 @@ class App extends Component {
     // img.onload = () => {
     //   ctx.drawImage(img, 0, 0)
     // }
+
+    // Konva.Image.fromURL('https://i.imgur.com/jUOj2YX.png', (image) => {
+    //   this.setState({backgroundImage: image})
+    // })
     const yamlString = `
 size: 600x710
 background:
   image: https://i.imgur.com/jUOj2YX.png
-  position:
-    x: 0
-    y: 0
-    z: 0
 top text:
   text: top text
-  upper: true
   style:
-    textTransform: uppercase
-    textAlign: center
     font: bold 60px Impact
     color: white
   stroke:
-    width: 5
+    width: 1
     color: black
   position:
     x: 300
     y: 80
+    z: 1
 bottom text:
   text: bottom text
   style:
-    textTransform: uppercase
-    textAlign: center
     font: bold 60px Impact
     color: white
-    stroke:
-      width: 5
-      color: black
+  stroke:
+    width: 1
+    color: black
   position:
     x: 300
     y: 690    
     `
     const doc = yamlConverter.safeLoad(yamlString)
+    console.log(doc)
+    for(let key in doc){
+      console.log(key)
+    }
   }
 
   handleChangeTemplate = event => {
@@ -185,28 +192,50 @@ bottom text:
     this.setState({ inputs: newInputs });
   }
 
-  render() {
-    const { inputs, template } = this.state
-    const { classes } = this.props;
+  onClickExport = () => {
+    const { backgroundImageURL, inputs, width, height } = this.state
+    let yaml = {}
+    yaml.image = backgroundImageURL
+    yaml.size = {width, height}
+    inputs.map( input => {
+      const { key, value, color, x, y, fontSize } = input
+      let template = {}
+      template.text = value
+      template.style = { font: `bold ${fontSize}px Impact`, color}
+      template.stroke = { width: 1, color: 'black'}
+      template.position = { x, y, z:1}
+      yaml[key] = template
+    })
+    const doc = yamlConverter.safeDump(yaml)
+    console.log(doc)
+  }
 
+  render() {
+    const { inputs, template, backgroundImageURL } = this.state
+    const { classes } = this.props;
+    console.log(this.state)
     return (
       <div className="App">
         <header className="App-header" variant="outlined">
           <div className="image-container">
             <Stage ref="stage" width={width} height={height} style={{position: 'relative', overflow: 'hidden'}}>
               <Layer>
-                <LionImage></LionImage>
+                {/* <LionImage image={backgroundImage}></LionImage> */}
+                <LionImage url={backgroundImageURL} width={width} height={height}></LionImage>
                 {inputs.map( ({key, value, color, x, y, fontSize}) => {
                   return (<Text
                     text={`${value}`}
                     x={x}
                     y={y}
                     fontSize={fontSize}
+                    fontFamily={'impact'}
                     draggable
                     fill={color}
-                    width={width-16}
+                    width={500}
+                    align={'center'}
                     onDragEnd={this.handleOnDragEnd(key)}
                     wrap
+                    stroke={'black'}
                     key={key}
                   />)
                 })
@@ -243,16 +272,7 @@ bottom text:
                 ))
               }
             </div>
-            <Button variant="contained" color="primary" onClick={()=>{
-              const node = this.refs.stage
-              const dataURL = node.toDataURL()
-              const link = document.createElement('a');
-              link.download = 'name.jpg';
-              link.href = dataURL;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            }}>
+            <Button variant="contained" color="primary" onClick={this.onClickExport}>
               Export
             </Button>
           </div>
